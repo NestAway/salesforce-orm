@@ -2,7 +2,7 @@ module SalesforceOrm
   module RestforceClient
 
     module_function
-    
+
     def instance
       # TODO need to verify with Sidekiq
 
@@ -15,7 +15,7 @@ module SalesforceOrm
       #
       # If this was a singleton object for process, then we'll have to
       # manually refresh authentication token for each request
-      Thread.current[:salesforce_orm_restforce_client] ||= Restforce.new
+      Thread.current[:salesforce_orm_restforce_client] ||= Restforce.new(Configuration.restforce_config || {})
     end
 
   end

@@ -1,13 +1,16 @@
-require
+$:.push File.expand_path("../lib", __FILE__)
+require "salesforce_orm/version"
+
 Gem::Specification.new do |s|
   s.name        = 'salesforce-orm'
-  s.version     = '1.0.0'
+  s.version     = SalesforceOrm::VERSION.dup
+  s.platform    = Gem::Platform::RUBY
   s.date        = '2017-06-07'
-  s.summary     = "Ruby ORM for Salesforce"
-  s.description = "Active record like ORM for Salesforce"
-  s.authors     = ['Vishal Viay', 'Shivansh Gaur']
-  s.email       = '0vishalvijay0@gmail.com'
-  s.files       = Dir['README.md", 'LICENSE', 'lib/**/*'']
+  s.summary     = 'Ruby ORM for Salesforce'
+  s.description = 'Active record like ORM for Salesforce'
+  s.authors     = ['Vishal Vijay', 'Shivansh Gaur']
+  s.email       = 'tech_team@nestaway.com'
+  s.files       = `git ls-files`.split("\n")
   s.homepage    = 'https://github.com/NestAway/salesforce-orm'
   s.license     = 'Apache License 2.0'
 
