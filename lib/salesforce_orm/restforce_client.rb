@@ -1,3 +1,5 @@
+require 'restforce'
+
 module SalesforceOrm
   module RestforceClient
 

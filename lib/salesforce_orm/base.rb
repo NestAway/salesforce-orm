@@ -1,3 +1,4 @@
+require 'forwardable'
 module SalesforceOrm
   class Base
 

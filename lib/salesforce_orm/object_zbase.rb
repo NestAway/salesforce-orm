@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module SalesforceOrm
   class ObjectBase < OpenStruct
 
@@ -50,7 +52,7 @@ module SalesforceOrm
       private
 
       def orm
-        Orm::Base.new(self)
+        Base.new(self)
       end
     end
 
