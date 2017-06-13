@@ -61,7 +61,7 @@ module SalesforceOrm
       sql = boolean_data_type_conversion(sql)
 
       # Convert aliased fields
-      convert_aliased_fields(sql)
+      convert_aliased_fields(sql).strip
     end
   end
 end

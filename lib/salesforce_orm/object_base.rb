@@ -19,6 +19,7 @@ module SalesforceOrm
         :except,
         :group,
         :order,
+        :reorder,
         :limit,
         :offset,
         :first,

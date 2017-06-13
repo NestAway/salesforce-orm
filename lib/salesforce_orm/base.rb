@@ -71,7 +71,8 @@ module SalesforceOrm
       :group,
       :limit,
       :offset,
-      :order
+      :order,
+      :reorder
     ].each do |method_name|
       define_method(method_name) do |*args|
         @builder = builder.send(method_name, *args)
@@ -98,7 +99,6 @@ module SalesforceOrm
     def make_query
       begin
         soql = to_soql
-        Rails.logger.info "\n\n\n}-------SOQL---#{soql}-------\n\n\n"
         client.query(to_soql).find_all.map do |object|
           build(object)
         end
