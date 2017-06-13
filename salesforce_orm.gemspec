@@ -25,7 +25,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'restforce', '~> 2.5'
 
   s.add_development_dependency 'byebug', '~> 0'
-  s.add_development_dependency 'bundler', '~> 1.15'
-  s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'rspec', '~> 3.0'
 end
