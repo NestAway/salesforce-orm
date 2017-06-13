@@ -3,6 +3,4 @@ rm salesforce-orm-*
 gem build salesforce_orm.gemspec
 gem install salesforce-orm-*
 
-ruby test.rb
-
 
