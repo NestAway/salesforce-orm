@@ -1,4 +1,5 @@
 require 'ostruct'
+require_relative 'object_maker'
 
 module SalesforceOrm
   class ObjectBase < OpenStruct
