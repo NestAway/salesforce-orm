@@ -4,7 +4,7 @@ module SalesforceOrm
     class << self
 
       def restforce_config=(config)
-        @restforce_config = DEFAULT_CONFIG.merge(config)
+        @restforce_config = config
       end
 
       def restforce_config
