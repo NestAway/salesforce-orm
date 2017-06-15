@@ -1,5 +1,5 @@
 require 'bundler/setup'
-require 'salesforce_orm'
+require 'salesforce-orm'
 require 'active_record'
 require 'nulldb_rspec'
 
