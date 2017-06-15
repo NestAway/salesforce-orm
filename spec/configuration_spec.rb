@@ -4,6 +4,10 @@ RSpec.describe SalesforceOrm::Configuration do
 
   klass = SalesforceOrm::Configuration
 
+  before(:all) do
+    klass.restforce_config = nil
+  end
+
   it 'should allow to set and get restforce_config' do
     expect(klass.restforce_config).to be_nil
 
