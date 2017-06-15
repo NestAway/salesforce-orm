@@ -1,8 +1,24 @@
 require 'spec_helper'
-require 'byebug'
 require_relative 'fixtures/sample_object'
 
+require 'byebug'
+require 'restforce'
+
 RSpec.describe SalesforceOrm::ObjectBase do
+
+  before(:all) do
+    @sample_field_map = {
+      field1: :fieldOne,
+      field2: :fieldTwo__c
+    }
+  end
+
+  def assign_field_map(new_field_map = nil)
+    old_field_map = SampleObject.field_map
+    SampleObject.field_map = new_field_map || @sample_field_map
+    yield(SampleObject.field_map)
+    SampleObject.field_map = old_field_map
+  end
 
   it 'should allow to use custom object name' do
     expect(SampleObject.object_name).to eq(SampleObject.name)
@@ -16,7 +32,15 @@ RSpec.describe SalesforceOrm::ObjectBase do
   end
 
   it 'should allow set field alias' do
+    expect(SampleObject.object_name).to eq(SampleObject.name)
 
+    SampleObject.field_map = @sample_field_map
+
+    expect(SampleObject.field_map).to eq(
+      SalesforceOrm::ObjectMaker::DEFAULT_FIELD_MAP.merge(@sample_field_map)
+    )
+
+    SampleObject.field_map = SalesforceOrm::ObjectMaker::DEFAULT_FIELD_MAP
   end
 
   it 'should allow set data type' do
@@ -36,41 +60,107 @@ RSpec.describe SalesforceOrm::ObjectBase do
   end
 
   describe 'create!' do
-    it 'should call create! method of restforce'
+    it 'should call create! method of restforce' do
+      assign_field_map do |field_map|
+        expect(SalesforceOrm::RestforceClient.instance).to receive(:create!).with(
+          SampleObject.object_name,
+          field_map[:field1] => :yo
+        )
+        SampleObject.create!({field1: :yo})
+      end
+    end
   end
 
   describe 'update_all!' do
-    it 'should call update_attributes! for each matched object'
+    it 'should call update_attributes! for each matched object' do
+      attributes = {yo: :yo}
+      results = [SampleObject.build({})]
+
+      results.each do |obj|
+        expect(obj).to receive(:update_attributes!).with(attributes)
+      end
+
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :make_query
+      ).and_return(results)
+
+      SampleObject.scoped.update_all!(attributes)
+    end
   end
 
   describe 'update_by_id!' do
-    it 'should call update! method of restforce with given id'
+    it 'should call update! method of restforce with given id' do
+      assign_field_map do |field_map|
+        expect(SalesforceOrm::RestforceClient.instance).to receive(:update!).with(
+          SampleObject.object_name,
+          field_map[:field1] => :yo,
+          field_map[:id] => 1
+        )
+        SampleObject.update_by_id!(1, {field1: :yo})
+      end
+    end
   end
 
   describe 'destroy_all!' do
-    it 'should call destroy! for each matched object'
+    it 'should call destroy! for each matched object' do
+      results = [SampleObject.build({})]
+
+      results.each do |obj|
+        expect(obj).to receive(:destroy!)
+      end
+
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :make_query
+      ).and_return(results)
+
+      SampleObject.scoped.destroy_all!
+    end
   end
 
   describe 'destroy_by_id!' do
-    it 'should call destroy! method of restforce with given id'
+    it 'should call destroy! method of restforce with given id' do
+      assign_field_map do |field_map|
+        expect(SalesforceOrm::RestforceClient.instance).to receive(:destroy!).with(
+          SampleObject.object_name, 1
+        )
+        SampleObject.destroy_by_id!(1)
+      end
+    end
   end
 
   describe 'where' do
-    it 'should allow chained call'
+    it 'should allow chained call' do
+      soql = SampleObject.where(yo: 3, yoyo: 'Uiew').to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE yo = 3 AND yoyo = \'Uiew\'')
+    end
   end
 
   describe 'select' do
-    it 'should by default select all fields'
+    it 'should by default select all fields' do
+      assign_field_map do |field_map|
+        soql = SampleObject.scoped.to_soql
+        expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate, fieldOne, fieldTwo__c FROM SampleObject')
+      end
+    end
 
-    it 'should select given fields'
+    it 'should select given fields' do
+      soql = SampleObject.select(:id).to_soql
+      expect(soql).to eq('SELECT Id FROM SampleObject')
+    end
   end
 
   describe 'except' do
-    it 'should remove previously chained method'
+    it 'should remove previously chained method' do
+      soql = SampleObject.select(:id).except(:select).select(:created_at).to_soql
+      expect(soql).to eq('SELECT CreatedDate FROM SampleObject')
+    end
   end
 
   describe 'group' do
-    it 'should add group by to query'
+    it 'should add group by to query' do
+      soql = SampleObject.group(:id, :created_at)
+      expect(soql).to eq('SELECT CreatedDate FROM SampleObject')
+    end
   end
 
   describe 'order' do

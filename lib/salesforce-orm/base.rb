@@ -45,7 +45,7 @@ module SalesforceOrm
     # Transaction not guaranteed
     def update_all!(attributes)
       each do |object|
-        object.update_attributes!(*args)
+        object.update_attributes!(attributes)
       end
     end
 
@@ -57,14 +57,17 @@ module SalesforceOrm
     end
 
     def update_attributes!(object, attributes)
-      client.update!(
-        klass.object_name,
-        map_to_keys(attributes.merge({id: object.id}))
-      )
+      update_by_id(object.id, attributes)
+    end
+
+    # Handling select differently because we select all the fields by default
+    def select(*args)
+      except(:select)
+      @builder = builder.select(*args)
+      self
     end
 
     [
-      :select,
       :scoped,
       :except,
       :where,
