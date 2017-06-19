@@ -63,7 +63,7 @@ module SalesforceOrm
       :destroy!
     ].each do |method_name|
       define_method(method_name) do |*args|
-        orm.send(method_name, self, *args)
+        orm.send(method_name, *([self] + args))
       end
     end
   end

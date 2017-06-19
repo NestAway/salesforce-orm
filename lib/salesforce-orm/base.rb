@@ -57,7 +57,7 @@ module SalesforceOrm
     end
 
     def update_attributes!(object, attributes)
-      update_by_id(object.id, attributes)
+      update_by_id!(object.id, attributes)
     end
 
     # Handling select differently because we select all the fields by default
@@ -92,7 +92,7 @@ module SalesforceOrm
     end
 
     def last
-      order('created_at DESC').first!
+      order('created_at DESC').first
     end
 
     def to_soql

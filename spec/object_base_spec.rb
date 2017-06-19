@@ -158,65 +158,154 @@ RSpec.describe SalesforceOrm::ObjectBase do
 
   describe 'group' do
     it 'should add group by to query' do
-      soql = SampleObject.group(:id, :created_at)
-      expect(soql).to eq('SELECT CreatedDate FROM SampleObject')
+      soql = SampleObject.scoped.group(:id, :created_at).to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject GROUP BY Id, CreatedDate')
     end
   end
 
   describe 'order' do
-    it 'should add order by to query'
+    it 'should add order by to query' do
+      soql = SampleObject.scoped.order(:id).to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject ORDER BY Id')
+    end
   end
 
   describe 'reorder' do
-    it 'should reset the previous order'
+    it 'should reset the previous order' do
+      soql = SampleObject.scoped.order(:id).reorder(:created_at).to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject ORDER BY CreatedDate')
+    end
   end
 
   describe 'limit' do
-    it 'should add limit to query'
+    it 'should add limit to query' do
+      soql = SampleObject.limit(10).to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject LIMIT 10')
+    end
   end
 
   describe 'offset' do
-    it 'should add offset to query'
+    it 'should add offset to query' do
+      soql = SampleObject.offset(10).to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject OFFSET 10')
+    end
   end
 
   describe 'first' do
-    it 'should call limit and and first of ORM'
+    it 'should call limit and make_query of ORM' do
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :limit
+      ).with(1).and_return(SalesforceOrm::Base.new(SampleObject))
+
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :make_query
+      ).and_return([])
+
+      SampleObject.first
+    end
   end
 
   describe 'last' do
-    it 'should call limit, order and and first of ORM'
+    it 'should call order and and first of ORM' do
+
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :order
+      ).with('created_at DESC').and_return(SalesforceOrm::Base.new(SampleObject))
+
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :first
+      )
+
+      SampleObject.last
+    end
   end
 
   describe 'each' do
-    it 'should call each of ORM'
+    it 'should call each of ORM' do
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :each
+      )
+
+      SampleObject.scoped.each
+    end
   end
 
   describe 'scoped' do
-    it 'should create default scope in the chain'
+    it 'should create default scope in the chain' do
+      soql = SampleObject.scoped.to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject')
+    end
   end
 
   describe 'all' do
-    it 'should call restforce with given query'
+    it 'should call restforce with given query' do
+      orm = SampleObject.where(id: [2, 332, 33])
+
+      soql = orm.to_soql
+
+      expect(SalesforceOrm::RestforceClient.instance).to receive(:query).with(
+        soql
+      ).and_return([])
+
+      orm.all
+    end
   end
 
   describe 'to_soql' do
-    it 'should call to_soql'
+    it 'should call to_soql of ORM' do
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :to_soql
+      )
+
+      SampleObject.scoped.to_soql
+    end
   end
 
   describe 'build' do
-    it 'should create a object with given values'
+    it 'should create a object with given values' do
+      sobj = SampleObject.build({yo: :yoyo})
+
+      expect(sobj.class.name).to eq(SampleObject.name)
+      expect(sobj.yo).to eq(:yoyo)
+    end
   end
 
   describe 'find' do
-    it 'should call restforce with id query'
+    it 'should call restforce with id query' do
+      expect(SalesforceOrm::RestforceClient.instance).to receive(:query).with(
+        'SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE Id = 2 LIMIT 1'
+      ).and_return([])
+
+      SampleObject.find(2)
+    end
   end
 
   describe 'find_by_*' do
-    it 'should automatically generate query based on method name'
+    it 'should automatically generate query based on method name' do
+      expect(SalesforceOrm::RestforceClient.instance).to receive(:query).with(
+        'SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE Id = 2 LIMIT 1'
+      ).and_return([])
+      SampleObject.find_by_id(2)
+
+      expect(SalesforceOrm::RestforceClient.instance).to receive(:query).with(
+        'SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE Id = 2 AND CreatedDate = 3 LIMIT 1'
+      ).and_return([])
+      SampleObject.find_by_id_and_created_at(2, 3)
+    end
   end
 
   describe 'update_attributes!' do
-    it 'should call restforce with update query'
+    it 'should call restforce with update query' do
+      attributes = {yo: :yoyo}
+      id = 2
+
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :update_by_id!
+      ).with(id, attributes)
+
+      sobj = SampleObject.build({id: id})
+      sobj.update_attributes!(attributes)
+    end
   end
 
   describe 'destroy!' do
