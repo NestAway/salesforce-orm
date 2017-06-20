@@ -149,7 +149,7 @@ module SalesforceOrm
           )
         else
           # The feilds which is not in field_map also will get added
-          # to the Salesforce::Object, to support aggregate queries
+          # to the ObjectBase, to support aggregate queries
           new_attributes[key] = attributes[key]
         end
       end
