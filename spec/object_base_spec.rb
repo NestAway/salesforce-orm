@@ -1,8 +1,6 @@
 require 'spec_helper'
-require_relative 'fixtures/sample_object'
-
-require 'byebug'
 require 'restforce'
+require_relative 'fixtures/sample_object'
 
 RSpec.describe SalesforceOrm::ObjectBase do
 

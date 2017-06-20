@@ -26,6 +26,10 @@ module SalesforceOrm
             regex = Regexp.new("\s+#{keyword}\s*\=\s*#{value}(\s+|$)")
             sql.gsub!(regex, " #{keyword} = #{value == 1}\\1")
           end
+          ['t', 'f'].each do |value|
+            regex = Regexp.new("\s+#{keyword}\s*\=\s*'#{value}'(\s+|$)")
+            sql.gsub!(regex, " #{keyword} = #{value == 't'}\\1")
+          end
         end
       end
       sql
