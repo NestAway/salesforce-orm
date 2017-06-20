@@ -39,13 +39,13 @@ module SalesforceOrm
     end
 
     def destroy!(object)
-      client.destroy(klass.object_name, object.id)
+      destroy_by_id!(object.id)
     end
 
     # Transaction not guaranteed
     def update_all!(attributes)
       each do |object|
-        object.update_attributes!(*args)
+        object.update_attributes!(attributes)
       end
     end
 
@@ -57,21 +57,25 @@ module SalesforceOrm
     end
 
     def update_attributes!(object, attributes)
-      client.update!(
-        klass.object_name,
-        map_to_keys(attributes.merge({id: object.id}))
-      )
+      update_by_id!(object.id, attributes)
+    end
+
+    # Handling select differently because we select all the fields by default
+    def select(*args)
+      except(:select)
+      @builder = builder.select(*args)
+      self
     end
 
     [
-      :select,
       :scoped,
       :except,
       :where,
       :group,
       :limit,
       :offset,
-      :order
+      :order,
+      :reorder
     ].each do |method_name|
       define_method(method_name) do |*args|
         @builder = builder.send(method_name, *args)
@@ -88,7 +92,7 @@ module SalesforceOrm
     end
 
     def last
-      order('created_at DESC').first!
+      order('created_at DESC').first
     end
 
     def to_soql
@@ -98,7 +102,6 @@ module SalesforceOrm
     def make_query
       begin
         soql = to_soql
-        Rails.logger.info "\n\n\n}-------SOQL---#{soql}-------\n\n\n"
         client.query(to_soql).find_all.map do |object|
           build(object)
         end

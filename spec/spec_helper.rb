@@ -1,5 +1,5 @@
 require 'bundler/setup'
-require 'salesforce_orm'
+require 'salesforce-orm'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

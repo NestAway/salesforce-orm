@@ -1,6 +1,6 @@
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'salesforce_orm/version'
+require 'salesforce-orm/version'
 
 Gem::Specification.new do |s|
   s.name        = 'salesforce-orm'
@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'restforce', '~> 2.5'
 
   s.add_development_dependency 'byebug', '~> 0'
+  s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'bundler', '~> 1.15'
   s.add_development_dependency 'rake', '~> 10.0'
-  s.add_development_dependency 'rspec', '~> 3.0'
 end
