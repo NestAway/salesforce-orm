@@ -39,7 +39,7 @@ module SalesforceOrm
     end
 
     def destroy!(object)
-      client.destroy(klass.object_name, object.id)
+      destroy_by_id!(object.id)
     end
 
     # Transaction not guaranteed

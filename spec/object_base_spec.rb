@@ -309,7 +309,15 @@ RSpec.describe SalesforceOrm::ObjectBase do
   end
 
   describe 'destroy!' do
-    it 'should call restforce destroy method'
+    it 'should call restforce destroy method' do
+      id = 2
+      expect_any_instance_of(SalesforceOrm::Base).to receive(
+        :destroy_by_id!
+      ).with(id)
+
+      sobj = SampleObject.build({id: id})
+      sobj.destroy!
+    end
   end
 
 end
