@@ -17,7 +17,7 @@ Or, If you want to install globally
 gem install salesforce-orm
 ```
 
-This Gem internally use [Restforce](https://github.com/ejholmes/restforce), So you have configure it
+This Gem internally use [Restforce](https://github.com/ejholmes/restforce), So you have to configure it
 
 There are 2 options to configure ([Restforce config](https://github.com/ejholmes/restforce#initialization))
 
@@ -109,10 +109,12 @@ Default data type map for `SampleObject`
 If you wanna change the data type of some fields
 
 ```
-  {
-    field_one: :boolean,
-    field_two: :integer
+class SampleObject < SalesforceOrm::ObjectBase
+  self.data_type_map = {
+    created_at: :datetime,
+    updated_at: :datetime
   }
+end
 ```
 
 **NOTE: It's mandatory to add data type map for boolean fields**
