@@ -19,12 +19,19 @@ module SalesforceOrm
       @klass = klass
       @client = RestforceClient.instance
       @builder = QueryBuilder.select(klass.field_map.keys)
+      where(RecordTypeManager::FIELD_NAME => klass.record_type_id) if klass.record_type_id
     end
 
     # create! doesn't return the SalesForce object back
     # It will return only the object id
     def create!(attributes)
-      client.create!(klass.object_name, map_to_keys(attributes))
+      new_attributes = map_to_keys(attributes)
+
+      new_attributes = new_attributes.merge(
+        RecordTypeManager::FIELD_NAME => klass.record_type_id
+      ) if klass.record_type_id
+
+      client.create!(klass.object_name, new_attributes)
     end
 
     # Transaction not guaranteed

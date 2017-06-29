@@ -1,5 +1,9 @@
+require_relative 'record_type_manager'
+
 module SalesforceOrm
   module ObjectMaker
+
+    include RecordTypeManager
 
     DEFAULT_FIELD_MAP = {
       id: :Id,

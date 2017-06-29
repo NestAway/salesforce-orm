@@ -7,5 +7,7 @@ module SalesforceOrm
     class CommonError < Base; end
 
     class ObjectNotFound < Base; end
+
+    class RecordTypeNotFound < Base; end
   end
 end
