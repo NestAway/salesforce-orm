@@ -57,6 +57,17 @@ RSpec.describe SalesforceOrm::ObjectBase do
     SampleObject.data_type_map = SalesforceOrm::ObjectMaker::DEFAULT_DATA_TYPE_MAP
   end
 
+  it 'should allow to use record type' do
+    expect(SampleObject.record_type).to be_nil
+
+    record_type = 'Xyz'
+    SampleObject.record_type = record_type
+
+    expect(SampleObject.record_type).to eq(record_type)
+
+    SampleObject.record_type = nil
+  end
+
   describe 'create!' do
     it 'should call create! method of restforce' do
       assign_field_map do |field_map|
@@ -66,6 +77,19 @@ RSpec.describe SalesforceOrm::ObjectBase do
         )
         SampleObject.create!({field1: :yo})
       end
+    end
+
+    it 'should handle record type' do
+      record_type_id = 'yo'
+
+      expect(SampleObject).to receive(:record_type_id).and_return(record_type_id).exactly(4).times
+
+
+      expect(SalesforceOrm::RestforceClient.instance).to receive(:create!).with(
+        SampleObject.object_name,
+        SalesforceOrm::RecordTypeManager::FIELD_NAME => record_type_id
+      )
+      SampleObject.create!({})
     end
   end
 
@@ -130,6 +154,17 @@ RSpec.describe SalesforceOrm::ObjectBase do
     it 'should allow chained call' do
       soql = SampleObject.where(yo: 3, yoyo: 'Uiew').to_soql
       expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE yo = 3 AND yoyo = \'Uiew\'')
+    end
+
+    it 'should handle record type' do
+      expect(SampleObject.scoped.to_soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject')
+
+      record_type_id = 'yo'
+
+      expect(SampleObject).to receive(:record_type_id).and_return(record_type_id).twice
+      expect(SampleObject.scoped.to_soql).to eq(
+        "SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE RecordTypeId = '#{record_type_id}'"
+      )
     end
   end
 

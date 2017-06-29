@@ -111,13 +111,31 @@ If you wanna change the data type of some fields
 ```
 class SampleObject < SalesforceOrm::ObjectBase
   self.data_type_map = {
-    created_at: :datetime,
-    updated_at: :datetime
+    field_one: :datetime,
+    field_two: :integer
   }
 end
 ```
 
 **NOTE: It's mandatory to add data type map for boolean fields**
+
+### record_type
+
+By default there is no record type configured for any object
+
+To specify a record type,
+
+```
+class SampleObject < SalesforceOrm::ObjectBase
+  self.record_type = 'Xyz' # DeveloperName in RecordType object
+end
+```
+
+All the queries and `create!` method will automatically use record type
+
+First time use the object, we make a call to Salesforce and find the record type by it's `DeveloperName`. This will be cached in memory.
+
+With Rails in except in development or test env, we take the advantage of `Rails.cache`
 
 ### Methods
 
@@ -211,7 +229,6 @@ SampleObject.build({id: 'some id', field_one: 'Some value'})
 
 - Default values
 - Relationships
-- Record type
 - More data types
 - Better aggregate methods
 
