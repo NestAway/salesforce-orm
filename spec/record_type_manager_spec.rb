@@ -112,6 +112,8 @@ RSpec.describe SalesforceOrm::RecordTypeManager do
       it 'should call Rails.cache evns expcept test and development' do
         Rails.env_name = 'production'
 
+        klass.object_name = 'SampleObject'
+
         expect(Rails).to receive(:cache).and_return(TestCache)
 
         id = 'bhla'
