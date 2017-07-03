@@ -42,7 +42,7 @@ module SalesforceOrm
     end
 
     def record_type_cache_key
-      ['RecordTypeManager', object_name, record_type].join('/')
+      ['SalesforceOrm', 'RecordTypeManager', object_name, record_type].join('/')
     end
   end
 end
