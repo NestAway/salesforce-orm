@@ -19,9 +19,10 @@ module SalesforceOrm
         if Rails.env.test?
           Object::RecordType.build(id: 'fake_record_type')
         elsif !Rails.env.development?
-          Rails.cache.fetch(record_type_cache_key) do
-            fetch_record_type
+          id = Rails.cache.fetch(record_type_cache_key) do
+            fetch_record_type.id
           end
+          Object::RecordType.build(id: id)
         else
           fetch_record_type
         end
