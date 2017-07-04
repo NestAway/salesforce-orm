@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'time'
 require_relative 'sql_to_soql'
 
 module SalesforceOrm
@@ -169,7 +170,11 @@ module SalesforceOrm
         value.to_i
       when :date_time
         return nil if value.blank?
-        Time.zone.parse(value)
+        if defined?(Rails)
+          Time.zone.parse(value)
+        else
+          Time.parse(value)
+        end
       when :array
         return [] if value.blank?
         value.split(';')
