@@ -1,14 +1,10 @@
-require 'forwardable'
 require 'time'
 require_relative 'sql_to_soql'
 
 module SalesforceOrm
   class Base
 
-    include Enumerable, SqlToSoql
-    extend Forwardable
-
-    def_delegators :make_query, *([:each] + Enumerable.instance_methods)
+    include SqlToSoql
 
     attr_reader :builder, :client, :klass
 
@@ -70,6 +66,7 @@ module SalesforceOrm
 
     # Handling select differently because we select all the fields by default
     def select(*args)
+      @results = nil
       except(:select)
       @builder = builder.select(*args)
       self
@@ -86,13 +83,24 @@ module SalesforceOrm
       :reorder
     ].each do |method_name|
       define_method(method_name) do |*args|
+        @results = nil
         @builder = builder.send(method_name, *args)
         self
       end
     end
 
-    def inspect
-      make_query
+    (
+      [
+        :each,
+        :empty?,
+        :size,
+        :map,
+        :inspect
+      ] + Enumerable.instance_methods
+    ).each do |method_name|
+      define_method(method_name) do |*args, &block|
+        make_query.send(method_name, *args, &block)
+      end
     end
 
     def all(*args)
@@ -112,7 +120,8 @@ module SalesforceOrm
     end
 
     def make_query
-      begin
+      return @results if @results
+      @results = begin
         soql = to_soql
         client.query(to_soql).find_all.map do |object|
           build(object)

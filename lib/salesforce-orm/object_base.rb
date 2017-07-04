@@ -28,8 +28,7 @@ module SalesforceOrm
         :scoped,
         :all,
         :to_soql,
-        :build,
-        :inspect
+        :build
       ].each do |method_name|
         define_method(method_name) do |*args|
           orm.send(method_name, *args)
@@ -64,6 +63,14 @@ module SalesforceOrm
       define_method(method_name) do |*args|
         self.class.orm.send(method_name, *([self] + args))
       end
+    end
+
+    def to_hash
+      to_h
+    end
+
+    def inspect
+      to_h
     end
   end
 end
