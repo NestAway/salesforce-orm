@@ -1,10 +1,20 @@
+require 'forwardable'
 require 'time'
 require_relative 'sql_to_soql'
 
 module SalesforceOrm
   class Base
 
-    include SqlToSoql
+    include Enumerable, SqlToSoql
+    extend Forwardable
+
+    def_delegators :make_query, *([
+      :each,
+      :empty?,
+      :size,
+      :map,
+      :inspect
+    ] + Enumerable.instance_methods)
 
     attr_reader :builder, :client, :klass
 
@@ -86,20 +96,6 @@ module SalesforceOrm
         @results = nil
         @builder = builder.send(method_name, *args)
         self
-      end
-    end
-
-    (
-      [
-        :each,
-        :empty?,
-        :size,
-        :map,
-        :inspect
-      ] + Enumerable.instance_methods
-    ).each do |method_name|
-      define_method(method_name) do |*args, &block|
-        make_query.send(method_name, *args, &block)
       end
     end
 
