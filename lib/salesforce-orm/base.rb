@@ -170,7 +170,7 @@ module SalesforceOrm
         value.to_i
       when :date_time
         return nil if value.blank?
-        if defined?(Rails)
+        if Time.respond_to?(:zone)
           Time.zone.parse(value)
         else
           Time.parse(value)
