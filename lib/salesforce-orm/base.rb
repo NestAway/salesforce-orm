@@ -8,7 +8,13 @@ module SalesforceOrm
     include Enumerable, SqlToSoql
     extend Forwardable
 
-    def_delegators :make_query, *([:each] + Enumerable.instance_methods)
+    def_delegators :make_query, *([
+      :each,
+      :empty?,
+      :size,
+      :map,
+      :inspect
+    ] + Enumerable.instance_methods)
 
     attr_reader :builder, :client, :klass
 
@@ -70,6 +76,7 @@ module SalesforceOrm
 
     # Handling select differently because we select all the fields by default
     def select(*args)
+      @results = nil
       except(:select)
       @builder = builder.select(*args)
       self
@@ -86,6 +93,7 @@ module SalesforceOrm
       :reorder
     ].each do |method_name|
       define_method(method_name) do |*args|
+        @results = nil
         @builder = builder.send(method_name, *args)
         self
       end
@@ -108,7 +116,8 @@ module SalesforceOrm
     end
 
     def make_query
-      begin
+      return @results if @results
+      @results = begin
         soql = to_soql
         client.query(to_soql).find_all.map do |object|
           build(object)
@@ -170,7 +179,7 @@ module SalesforceOrm
         value.to_i
       when :date_time
         return nil if value.blank?
-        if Time.respond_to?(:zone)
+        if Time.respond_to?(:zone) && Time.zone
           Time.zone.parse(value)
         else
           Time.parse(value)

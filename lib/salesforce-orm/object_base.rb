@@ -64,5 +64,13 @@ module SalesforceOrm
         self.class.orm.send(method_name, *([self] + args))
       end
     end
+
+    def to_hash
+      to_h
+    end
+
+    def inspect
+      to_h
+    end
   end
 end
