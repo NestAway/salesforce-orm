@@ -174,7 +174,7 @@ module SalesforceOrm
         value.to_i
       when :date_time
         return nil if value.blank?
-        if Time.respond_to?(:zone)
+        if Time.respond_to?(:zone) && Time.zone
           Time.zone.parse(value)
         else
           Time.parse(value)
