@@ -91,6 +91,10 @@ module SalesforceOrm
       end
     end
 
+    def inspect
+      make_query
+    end
+
     def all(*args)
       make_query
     end
