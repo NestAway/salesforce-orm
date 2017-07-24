@@ -24,7 +24,12 @@ RSpec.describe SalesforceOrm::SqlToSoql do
 
   it 'should convert IS NOT to !=' do
     soql = SampleObject.where('id IS NOT NULL').to_soql
-    expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE (id != NULL)')
+    expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE (Id != NULL)')
+  end
+
+  it 'should convert IS NOT to !=' do
+    soql = SampleObject.where('id IS NOT NULL').to_soql
+    expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE (Id != NULL)')
   end
 
   it 'should convert IS to =' do
@@ -77,6 +82,16 @@ RSpec.describe SalesforceOrm::SqlToSoql do
     }) do
       soql = SampleObject.where(field_one: 'Hi', field_two: 333, yo: [1, 2, 3]).to_soql
       expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate, FieldOne, FieldTwo__c FROM SampleObject WHERE FieldOne = \'Hi\' AND FieldTwo__c = 333 AND yo IN (1, 2, 3)')
+    end
+  end
+
+  it 'should handle ()' do
+    remap_sample_object(field_map: {
+      field_one: :FieldOne,
+      field_two: :FieldTwo__c
+    }) do
+      soql = SampleObject.where(id: 2).where(field_one: [1, 2, 3]).where('(id IS NULL AND idor = 3 AND (id=121 OR Id!= 12) OR ID = false').to_soql
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate, FieldOne, FieldTwo__c FROM SampleObject WHERE Id = 2 AND FieldOne IN (1, 2, 3) AND ((Id = NULL AND idor = 3 AND (Id=121 OR Id!= 12) OR ID = false)')
     end
   end
 end

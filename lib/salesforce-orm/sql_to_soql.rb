@@ -4,19 +4,13 @@ module SalesforceOrm
       keyword =~ /^(AVG|COUNT|COUNT|COUNT_DISTINCT|MIN|MAX|SUM)\(/i
     end
 
-    def convert_aliased_fields(sql_str, split_by = Regexp.new('\s+'), join_by = ' ')
-      spcial_char_regex = /[=<>!,]+/
-      sql_str.split(split_by, -1).map do |keyword|
-        if aggregate_function?(keyword)
-          aggregate_data = keyword.match(/^(.*)\((.*)(\).*)/i).captures
-          raise Error::CommonError, 'Invalid aggregate function' unless aggregate_data[1]
-          "#{aggregate_data[0]}(#{convert_aliased_fields(aggregate_data[1])}#{aggregate_data[2]}"
-        elsif keyword =~ spcial_char_regex
-          convert_aliased_fields(keyword, spcial_char_regex, keyword.gsub(spcial_char_regex).first)
-        else
-          klass.field_map[keyword.to_sym] || keyword
-        end
-      end.join(join_by)
+    def convert_aliased_fields(sql_str)
+      result = sql_str.clone
+      klass.field_map.keys.each do |k|
+        regex = Regexp.new("([\(\)=<>!,%'\s\t]+)#{k.to_s}([\(\)=<>!,%'\s\t]+|$)")
+        result.gsub!(regex, "\\1#{klass.field_map[k].to_s}\\2")
+      end
+      result.gsub!(/\s+/, ' ')
     end
 
     def boolean_data_type_conversion(sql)
