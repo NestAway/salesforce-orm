@@ -27,11 +27,6 @@ RSpec.describe SalesforceOrm::SqlToSoql do
     expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE (Id != NULL)')
   end
 
-  it 'should convert IS NOT to !=' do
-    soql = SampleObject.where('id IS NOT NULL').to_soql
-    expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE (Id != NULL)')
-  end
-
   it 'should convert IS to =' do
     soql = SampleObject.where(id: nil).to_soql
     expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject WHERE Id = NULL')
