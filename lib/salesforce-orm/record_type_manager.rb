@@ -38,7 +38,10 @@ module SalesforceOrm
     private
 
     def fetch_record_type
-      Object::RecordType.where(developer_name: record_type).first
+      Object::RecordType.where(
+        developer_name: record_type,
+        sobject_type: object_name
+      ).first
     end
 
     def record_type_cache_key
