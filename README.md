@@ -96,6 +96,7 @@ Allowed data types are,
 - `:date_time`
 - `:date`
 - `:array`
+- `:boolean`
 
 Default is same data type of given value
 

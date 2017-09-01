@@ -186,6 +186,9 @@ module SalesforceOrm
       when :array
         return [] if value.blank?
         value.split(';')
+      when :boolean
+        return nil if value.nil?
+        value.to_s.downcase == 'true'
       else
         value
       end
