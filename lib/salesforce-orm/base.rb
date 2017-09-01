@@ -177,18 +177,26 @@ module SalesforceOrm
       case data_type
       when :integer
         value.to_i
+      when :float
+        value.to_f
       when :date_time
-        return nil if value.blank?
-        if Time.respond_to?(:zone) && Time.zone
-          Time.zone.parse(value)
-        else
-          Time.parse(value)
-        end
+        time_parse(value: value)
+      when :date
+        time_parse(value: value).try(:to_date)
       when :array
         return [] if value.blank?
         value.split(';')
       else
         value
+      end
+    end
+
+    def time_parse(value:)
+      return nil if value.blank?
+      if Time.respond_to?(:zone) && Time.zone
+        Time.zone.parse(value)
+      else
+        Time.parse(value)
       end
     end
 
