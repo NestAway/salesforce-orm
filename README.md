@@ -92,7 +92,9 @@ end
 Allowed data types are,
 
 - `:integer`
+- `:float`
 - `:date_time`
+- `:date`
 - `:array`
 
 Default is same data type of given value
