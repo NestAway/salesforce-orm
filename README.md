@@ -189,6 +189,8 @@ SampleObject.find_by_field_one_and_field_two_and_field_three(1, 2, 3)
 SampleObject.select('count(id)').all
 ```
 
+**NOTE: Salesforce API's accepts SOQL query as a URL params, so make sure URL length is not longer than 16087 chars**
+
 Instance methods
 
 ```
