@@ -73,11 +73,10 @@ module SalesforceOrm
       to_h
     end
 
-    # Fix for unable to cache object of this class.
+    # marshal_dump and marshal_load is a fix for unable to cache object of this class.
     # This is a temporary solution. Once Restforce::Mash fix this issue, we'll revert this change
-    # WARNING: As of now, you can't do any restforce operation on the object of this class which is fetched from cache
+
     def marshal_dump
-      byebug
       h = to_h
       if h[:attributes]
         h[:attributes] = h[:attributes].clone
