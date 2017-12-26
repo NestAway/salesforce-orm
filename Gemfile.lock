@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    salesforce-orm (1.2.5)
+    salesforce-orm (1.2.6)
       activerecord (~> 3)
       activerecord-nulldb-adapter (~> 0)
       restforce (~> 2.5)
