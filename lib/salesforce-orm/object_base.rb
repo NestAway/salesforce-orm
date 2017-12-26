@@ -81,7 +81,7 @@ module SalesforceOrm
     h = to_h
     h[:attributes] = Restforce::Mash.new(attributes.to_h) if attributes
     h[:original_object] = Restforce::SObject.new(original_object.to_h) if original_object
-    h[:original_object][:attributes] = Restforce::Mash.new(original_object.attributes.to_h) if original_object && original_object.attributes
+    h[:original_object]['attributes'] = Restforce::Mash.new(original_object.attributes.to_h) if original_object && original_object.attributes
     h
   end
 end
