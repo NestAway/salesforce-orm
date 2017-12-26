@@ -72,16 +72,38 @@ module SalesforceOrm
     def inspect
       to_h
     end
-  end
 
-  # Fix for unable to cache object of this class.
-  # This is a temporary solution. Once Restforce::Mash fix this issue, we'll revert this change
-  # WARNING: As of now, you can't do any restforce operation on the object of this class which is fetched from cache
-  def marshal_dump
-    h = to_h
-    h[:attributes] = Restforce::Mash.new(attributes.to_h) if attributes
-    h[:original_object] = Restforce::SObject.new(original_object.to_h) if original_object
-    h[:original_object]['attributes'] = Restforce::Mash.new(original_object.attributes.to_h) if original_object && original_object.attributes
-    h
+    # Fix for unable to cache object of this class.
+    # This is a temporary solution. Once Restforce::Mash fix this issue, we'll revert this change
+    # WARNING: As of now, you can't do any restforce operation on the object of this class which is fetched from cache
+    def marshal_dump
+      byebug
+      h = to_h
+      if h[:attributes]
+        h[:attributes] = h[:attributes].clone
+        h[:attributes].instance_variable_set(:@client, nil)
+      end
+
+      if h[:original_object]
+        h[:original_object] = h[:original_object].clone
+        h[:original_object].instance_variable_set(:@client, nil)
+
+        if h[:original_object]['attributes']
+          h[:original_object]['attributes'] = h[:original_object]['attributes'].clone
+          h[:original_object]['attributes'].instance_variable_set(:@client, nil)
+        end
+      end
+      h
+    end
+
+    def marshal_load(data)
+      result = super(data)
+
+      attributes.instance_variable_set(:@client, RestforceClient.instance) if attributes
+      original_object.instance_variable_set(:@client, RestforceClient.instance) if original_object
+      original_object.attributes.instance_variable_set(:@client, RestforceClient.instance) if original_object && original_object.attributes
+
+      result
+    end
   end
 end
