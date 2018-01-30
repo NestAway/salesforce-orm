@@ -30,7 +30,8 @@ module SalesforceOrm
     end
 
     # TODO: optimize this method
-    def sql_to_soql(sql)
+    def sql_to_soql(frozen_sql)
+      sql = frozen_sql.dup
       # Unescape column and table names
       sql.gsub!('`', '')
 
@@ -50,7 +51,7 @@ module SalesforceOrm
       sql.gsub!(/\s+IS\s+/i, ' = ')
 
       # Convert datatime to salesforce format
-      sql.gsub!(/'(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})'/, '\1T\2Z')
+      sql.gsub!(/'(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})(\.\d+)?'/, '\1T\2Z')
 
       # Convert date to salesforce format
       sql.gsub!(/'(\d{4}-\d{2}-\d{2})'/, '\1')

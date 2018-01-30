@@ -31,7 +31,7 @@ In rails, write below code in application.rb or environment specific file
 
 Other projects, run it before you use SaleforceOrm
 
-```
+```ruby
   SaleforceOrm::Configuration.restforce_config = {
     ... # Restforce configuration
   }
@@ -41,7 +41,7 @@ Other projects, run it before you use SaleforceOrm
 
 Create object class
 
-```
+```ruby
 class SampleObject < SalesforceOrm::ObjectBase
 end
 ```
@@ -50,13 +50,13 @@ end
 
 Default object name is `class.name`
 
-```
+```ruby
 SampleObject
 ```
 
 If you have a custom object name,
 
-```
+```ruby
 class SampleObject < SalesforceOrm::ObjectBase
   self.object_name = 'SampleObject__c'
 end
@@ -68,7 +68,7 @@ Field map is used for create, update actions. This can be used for aliasing the 
 
 Default field map for `SampleObject`
 
-```
+```ruby
   {
     id: :Id,
     created_at: :CreatedAt,
@@ -78,7 +78,7 @@ Default field map for `SampleObject`
 
 If you wanna map more fields for an object
 
-```
+```ruby
 class SampleObject < SalesforceOrm::ObjectBase
   self.field_map = {
     field_one: :FieldOne,
@@ -102,7 +102,7 @@ Default is same data type of given value
 
 Default data type map for `SampleObject`
 
-```
+```ruby
   {
     created_at: :datetime,
     updated_at: :datetime
@@ -111,7 +111,7 @@ Default data type map for `SampleObject`
 
 If you wanna change the data type of some fields
 
-```
+```ruby
 class SampleObject < SalesforceOrm::ObjectBase
   self.data_type_map = {
     field_one: :datetime,
@@ -128,7 +128,7 @@ By default there is no record type configured for any object
 
 To specify a record type,
 
-```
+```ruby
 class SampleObject < SalesforceOrm::ObjectBase
   self.record_type = 'Xyz' # DeveloperName in RecordType object
 end
@@ -146,7 +146,7 @@ Methods are similar to ActiveRecord::Base
 
 Class methods
 
-```
+```ruby
 SampleObject.[
   :create!,
   :update_all!,
@@ -169,7 +169,7 @@ SampleObject.[
 ```
 
 eg:
-```
+```ruby
 SampleObject.where(id: 'qd')
 
 SampleObject.where(id: ['eqd', 'qqwd'])
@@ -193,7 +193,7 @@ SampleObject.select('count(id)').all
 
 Instance methods
 
-```
+```ruby
 SampleObject.[
   :update_attributes,
   :destroy
@@ -206,7 +206,7 @@ Other class methods (Specific to SalesforceOrm)
 
 To update an object by id
 
-```
+```ruby
 SampleObject.update_by_id!('some_id', {feild_one: 'some_value', field_two: 'some_other_value'})
 ```
 
@@ -214,7 +214,7 @@ SampleObject.update_by_id!('some_id', {feild_one: 'some_value', field_two: 'some
 
 To destroy an object by id
 
-```
+```ruby
 SampleObject.destroy_by_id!('some_id')
 ```
 
@@ -226,7 +226,7 @@ To generate, SOQL query (Equavalent to `to_sql`)
 
 To create a new instance of SampleObject
 
-```
+```ruby
 SampleObject.build({id: 'some id', field_one: 'Some value'})
 ```
 
