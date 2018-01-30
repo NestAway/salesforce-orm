@@ -199,14 +199,14 @@ RSpec.describe SalesforceOrm::ObjectBase do
   describe 'order' do
     it 'should add order by to query' do
       soql = SampleObject.scoped.order(:id).to_soql
-      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject ORDER BY Id')
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject ORDER BY Id ASC')
     end
   end
 
   describe 'reorder' do
     it 'should reset the previous order' do
       soql = SampleObject.scoped.order(:id).reorder(:created_at).to_soql
-      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject ORDER BY CreatedDate')
+      expect(soql).to eq('SELECT Id, CreatedDate, LastModifiedDate FROM SampleObject ORDER BY CreatedDate ASC')
     end
   end
 

@@ -83,7 +83,6 @@ module SalesforceOrm
     end
 
     [
-      :scoped,
       :except,
       :where,
       :group,
@@ -97,6 +96,11 @@ module SalesforceOrm
         @builder = builder.send(method_name, *args)
         self
       end
+    end
+
+    def scoped(*args)
+      where(nil)
+      self
     end
 
     def all(*args)
