@@ -116,7 +116,9 @@ module SalesforceOrm
     end
 
     def to_soql
-      sql_to_soql(builder.to_sql)
+      ActiveRecord::Base.connection_pool.with_connection do
+        sql_to_soql(builder.to_sql)
+      end
     end
 
     def make_query
