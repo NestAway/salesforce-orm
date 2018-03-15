@@ -9,7 +9,8 @@ module SalesforceOrm
 
     establish_connection(
       adapter: :nulldb,
-      schema: (File.join SalesforceOrm.root, 'support', 'schema.rb')
+      schema: (File.join SalesforceOrm.root, 'support', 'schema.rb'),
+      pool: 10
     )
   end
 end
