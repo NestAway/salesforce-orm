@@ -116,7 +116,11 @@ module SalesforceOrm
     end
 
     def to_soql
-      ActiveRecord::Base.connection_pool.with_connection do
+      begin
+        sql_to_soql(builder.to_sql)
+      rescue ActiveRecord::ConnectionTimeoutError => ex
+        conn_pool = ActiveRecord::Base.connection_handler.connection_pools.select { |conn_pool| conn_pool.connections.first.adapter_name == 'NullDB'}.first
+        conn_pool.clear_reloadable_connections!
         sql_to_soql(builder.to_sql)
       end
     end
