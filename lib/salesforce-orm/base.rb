@@ -180,9 +180,9 @@ module SalesforceOrm
     def cast_to(value:, data_type:)
       case data_type
       when :integer
-        value.to_i
+        value.nil? ? nil : value.to_i
       when :float
-        value.to_f
+        value.nil? ? nil : value.to_f
       when :date_time
         time_parse(value: value)
       when :date
