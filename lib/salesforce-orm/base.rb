@@ -38,7 +38,9 @@ module SalesforceOrm
         RecordTypeManager::FIELD_NAME => klass.record_type_id
       ) if klass.record_type_id
 
-      client.create!(klass.object_name, new_attributes)
+      client.with do |connection|
+        connection.create!(klass.object_name, new_attributes)
+      end
     end
 
     # Transaction not guaranteed
@@ -49,7 +51,9 @@ module SalesforceOrm
     end
 
     def destroy_by_id!(id)
-      client.destroy(klass.object_name, id)
+      client.with do |connection|
+        connection.destroy(klass.object_name, id)
+      end
     end
 
     def destroy!(object)
@@ -64,10 +68,12 @@ module SalesforceOrm
     end
 
     def update_by_id!(id, attributes)
-      client.update!(
-        klass.object_name,
-        map_to_keys(attributes.merge({id: id}))
-      )
+      client.with do |connection|
+        connection.update!(
+          klass.object_name,
+          map_to_keys(attributes.merge({id: id}))
+        )
+      end
     end
 
     def update_attributes!(object, attributes)
