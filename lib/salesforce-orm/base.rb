@@ -123,8 +123,10 @@ module SalesforceOrm
       return @results if @results
       @results = begin
         soql = to_soql
-        client.query(to_soql).find_all.map do |object|
-          build(object)
+        client.with do |connection|
+          connection.query(to_soql).find_all.map do |object|
+            build(object)
+          end
         end
       rescue => e
         # On passing a invalid object id, salesforce throughs an exception

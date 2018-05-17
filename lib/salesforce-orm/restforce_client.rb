@@ -19,6 +19,5 @@ module SalesforceOrm
       # manually refresh authentication token for each request
       Thread.current[:salesforce_orm_restforce_client] ||= Restforce.new(Configuration.restforce_config || {})
     end
-
   end
 end
