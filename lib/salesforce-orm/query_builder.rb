@@ -9,7 +9,8 @@ module SalesforceOrm
 
     establish_connection(
       adapter: :nulldb,
-      schema: (File.join SalesforceOrm.root, 'support', 'schema.rb')
+      schema: (File.join SalesforceOrm.root, 'support', 'schema.rb'),
+      pool: ENV['NULLDB_MAX_POOL_SIZE']
     )
   end
 end
