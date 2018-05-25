@@ -3,7 +3,6 @@ require 'restforce'
 require_relative 'fixtures/sample_object'
 
 RSpec.describe SalesforceOrm::ObjectBase do
-
   before(:all) do
     @sample_field_map = {
       field1: :fieldOne,
@@ -46,7 +45,7 @@ RSpec.describe SalesforceOrm::ObjectBase do
       SalesforceOrm::ObjectMaker::DEFAULT_DATA_TYPE_MAP
     )
 
-    custom_data_type_map = {yo: :date_time}
+    custom_data_type_map = { yo: :date_time }
 
     SampleObject.data_type_map = custom_data_type_map
 
@@ -55,6 +54,15 @@ RSpec.describe SalesforceOrm::ObjectBase do
     )
 
     SampleObject.data_type_map = SalesforceOrm::ObjectMaker::DEFAULT_DATA_TYPE_MAP
+  end
+
+  it 'should represent nil numeric types as nil' do
+    SampleObject.data_type_map = { some_nil_int: :integer, some_nil_float: :float }
+
+    sobj = SampleObject.build(some_nil_int: :nil, some_nil_float: nil)
+
+    expect(sobj.some_nil_float).to be_nil
+    expect(sobj.some_nil_integer).to be_nil
   end
 
   it 'should allow to use record type' do
@@ -83,7 +91,6 @@ RSpec.describe SalesforceOrm::ObjectBase do
       record_type_id = 'yo'
 
       expect(SampleObject).to receive(:record_type_id).and_return(record_type_id).exactly(4).times
-
 
       expect(SalesforceOrm::RestforceClient.instance).to receive(:create!).with(
         SampleObject.object_name,
@@ -240,7 +247,6 @@ RSpec.describe SalesforceOrm::ObjectBase do
 
   describe 'last' do
     it 'should call order and and first of ORM' do
-
       expect_any_instance_of(SalesforceOrm::Base).to receive(
         :order
       ).with('created_at DESC').and_return(SalesforceOrm::Base.new(SampleObject))
@@ -352,5 +358,4 @@ RSpec.describe SalesforceOrm::ObjectBase do
       sobj.destroy!
     end
   end
-
 end
