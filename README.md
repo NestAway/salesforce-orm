@@ -234,7 +234,9 @@ SampleObject.build({id: 'some id', field_one: 'Some value'})
 
 If you get following error on a threaded server
 
-`ActiveRecord::ConnectionTimeoutError: could not obtain a database connection within 5 seconds (waited 5.000150138 seconds). The max pool size is currently 5; consider increasing it.`
+```
+ActiveRecord::ConnectionTimeoutError: could not obtain a database connection within 5 seconds (waited 5.000000001 seconds). The max pool size is currently 5; consider increasing it.
+```
 
 Consider setting environment variable `NULLDB_MAX_POOL_SIZE` to a value greater than the max thread pool size.
 
